@@ -1,0 +1,35 @@
+I'm sorry, I don't understand that.
+You: hi
+ChatBot: Hello! How can I assist you today?
+You: I need a favor
+ChatBot: I'm sorry, I don't understand that.
+You: how are you
+ChatBot: I'm a chatbot, so I'm always good! How about you?
+You: ^Z
+[1]+  Stopped                 python3 chatbot.py
+ubuntu@ip-172-31-39-174:~$ vim responses.json
+ubuntu@ip-172-31-39-174:~$ vim chatbot.py
+    "how are you": "I'm a chatbot, so I'm always good! How about you?",
+    "what is your name": "I'm ChatBot. Nice to meet you!",
+    "bye": "Goodbye! Have a great day!",
+    "exit": "Goodbye! Have a great day!"
+}
+
+def get_response(user_input):
+    user_input = user_input.lower()  # Normalize the input to lowercase
+    return responses.get(user_input, "I'm sorry, I don't understand that.")
+
+def main():
+    print("Welcome to ChatBot! Type 'exit' to end the conversation.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["bye", "exit"]:
+            print("ChatBot: Goodbye! Have a great day!")
+            break
+        response = get_response(user_input)
+        print(f"ChatBot: {response}")
+
+if __name__ == "__main__":
+    main()
+
+
