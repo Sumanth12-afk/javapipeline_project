@@ -6,27 +6,30 @@ pipeline {
     }
 
     environment {
-        SONARQUBE_URL = 'http://localhost:9000'
+        SONARQUBE_URL = 'http://3.144.142.248:9000'
         SONARQUBE_TOKEN = 'your_sonarqube_token'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/your-java-app.git'
+                git 'https://github.com/Sumanth12-afk/javapipeline_project.git'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package' // Use Maven installed on the host machine
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
+                script {
+                    docker.image('b2fa856aa4dc').run('-p 9000:9000') // Start SonarQube Docker container
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
@@ -34,7 +37,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build('your-java-app:latest')
+                    docker.build('calculator:latest') // Build Docker image
                 }
             }
         }
@@ -42,16 +45,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.run('your-java-app:latest')
+                    docker.image('calculator:latest').run() // Run Docker container
                 }
             }
         }
 
         stage('Prometheus Monitoring') {
             steps {
-                sh 'curl http://localhost:9090/metrics'
+                sh 'curl http://3.144.142.248:9090/metrics'
             }
         }
     }
 }
-
